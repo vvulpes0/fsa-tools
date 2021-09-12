@@ -161,10 +161,33 @@ set_rand_seed(void)
 	sranddev();
 }
 #else /* ifndef __APPLE__ */
+/* mix abstracted from the public domain Bob Jenkins lookup3.c
+ * http://burtleburtle.net/bob/c/lookup3.c
+ */
+#define rot(x,r) ((x) << (r) | (x) >> (32 - (r)))
+static int
+mix(unsigned int a, unsigned int b, unsigned int c)
+{
+	a -= c; a ^= rot(c, 4); c += b;
+	b -= a; b ^= rot(a, 6); a += c;
+	c -= b; c ^= rot(b, 8); b += a;
+	a -= c; a ^= rot(c,16); c += b;
+	b -= a; a ^= rot(a,19); a += c;
+	c -= b; a ^= rot(b, 4); b += a;
+
+	c ^= b; c -= rot(b, 14);
+	a ^= c; a -= rot(c, 11);
+	b ^= a; b -= rot(a, 25);
+	c ^= b; c -= rot(b, 16);
+	a ^= c; a -= rot(c,  4);
+	b ^= a; b -= rot(a, 14);
+	c ^= b; c -= rot(b, 24);
+	return c;
+}
+
 static void
 set_rand_seed(void)
 {
-	time_t t;
-	srand(time(&t));
+	srand(mix(time(NULL), clock(), getpid()));
 }
 #endif /* ifndef __APPLE__ */
