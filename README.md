@@ -36,7 +36,7 @@ Generate 100 random automata and determine
 what proportion is strictly piecewise:
 
 ```sh
-yes | head -n100 | xargs -L1 sh -c 'genfsa 7 5 | verify-sl && printf "1\n" || true' | wc -l | tr -d '[:blank:]'
+yes | head -n100 | xargs -L1 sh -c 'genfsa 7 5 | verify-sp && printf "1\n" || true' | wc -l | tr -d '[:blank:]'
 ```
 
 If you have a BSD-compatible `xargs` then you can add, say, `-P16`
