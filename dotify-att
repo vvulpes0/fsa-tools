@@ -1,0 +1,54 @@
+#!/usr/bin/awk -f
+
+BEGIN {
+	print "digraph {"
+	istate=-1
+	ostate=-1
+	initial=-1
+	a=""
+}
+
+(NF > 2) {
+	if (initial < 0)
+	{
+		initial = $1
+	}
+	if ($3 == "0") {
+		$3 = "ε"
+	}
+	should_print = 1
+	if (($1 != istate || $2 != ostate)) {
+		if (istate >= 0) {
+			print istate " -> " ostate " [label=\"" a "\"];"
+		}
+		istate = $1
+		ostate = $2
+		a = $3
+		next
+	}
+	if (a == "") {
+		a = $3
+	} else {
+		a = a ", " $3
+	}
+	next
+}
+
+{
+	if (initial < 0) {
+		initial = $1
+	}
+	if (should_print != 0) {
+		print istate " -> " ostate " [label=\"" a "\"];"
+	}
+	should_print = 0
+	print $1 " [peripheries=2];"
+}
+
+END {
+	if (initial >= 0) {
+		print "_0_ [style=\"invis\",width=0,height=0,label=\"\"];"
+		print "_0_ -> " initial ";"
+	}
+	print "}"
+}

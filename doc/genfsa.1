@@ -1,0 +1,68 @@
+.\" 
+.Dd September 12, 2021
+.Os
+.Dt GENFSA 1
+.Sh NAME
+.Nm genfsa
+.Nd create a random finite state acceptor
+.Sh SYNOPSIS
+.Nm genfsa
+.Op Fl hvz?
+.Op Fl e Ar weight
+.Op Fl f Ar weight
+.Ar states
+.Ar symbols
+.Sh DESCRIPTION
+The
+.Nm genfsa
+utility constructs a finite state acceptor with the given number of states
+and with an alphabet of the given size in
+.Tn AT&T
+tabular format.
+There is no guarantee that every state is reachable.
+For each possible edge, it appears with a user-specified probability.
+There is also a user-specified probability for whether a state is accepting.
+There is only a single initial state,
+which is always the lowest-numbered state that has outgoing edges.
+.Bl -tag -width "-e weight" -compact -offset
+.It Fl e Ar weight
+Generate edges with a probability of
+.Ar weight
+percent.
+.It Fl f Ar weight
+Assign accepting status to states with a probability of
+.Ar weight
+percent.
+.It Fl h, Fl \&?
+Print a usage message and exit.
+.It Fl v
+Print the version number and exit.
+.It Fl z
+Enable generation of do-nothing edges.
+.El
+.Sh EXAMPLES
+The command:
+.Dl genfsa -e15 7 4
+will create an acceptor with seven states
+over the symbols A, B, C, and D.
+There is a 15% chance of each possible edge occurring.
+.Pp
+The command:
+.Dl genfsa -zf100 10 27
+will create an acceptor with ten states
+over the symbols A-Z and aA,
+and will also include do-nothing edges denoted by 0.
+Every state will be accepting.
+.Sh DIAGNOSTICS
+.Ex -std genfsa
+.Sh SEE ALSO
+.Xr plebby 1
+.Sh HISTORY
+A
+.Nm genfsa
+command first appeared in version 1.0 of the FSA Tools package.
+.Sh BUGS
+In order to avoid filesystem writes, only a single acceptor is generated.
+This means that generating several acceptors in quick succession
+requires special care to ensure the random number generator is seeded
+differently.
