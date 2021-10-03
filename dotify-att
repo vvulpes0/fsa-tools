@@ -16,6 +16,9 @@ BEGIN {
 	if ($3 == "0") {
 		$3 = "ε"
 	}
+	if (NF > 3 && ($4 == "0")) {
+		$4 = "ε"
+	}
 	should_print = 1
 	if (($1 != istate || $2 != ostate)) {
 		if (istate >= 0) {
@@ -23,13 +26,13 @@ BEGIN {
 		}
 		istate = $1
 		ostate = $2
-		a = $3
+		a = $3 (($4 && ($4 != $3)) ? ":" $4 : "")
 		next
 	}
 	if (a == "") {
-		a = $3
+		a = $3 (($4 && ($4 != $3)) ? ":" $4 : "")
 	} else {
-		a = a ", " $3
+		a = a ", " $3 (($4 && ($4 != $3)) ? ":" $4 : "")
 	}
 	next
 }
@@ -46,6 +49,9 @@ BEGIN {
 }
 
 END {
+	if (should_print != 0) {
+		print istate " -> " ostate " [label=\"" a "\"];"
+	}
 	if (initial >= 0) {
 		print "_0_ [style=\"invis\",width=0,height=0,label=\"\"];"
 		print "_0_ -> " initial ";"
